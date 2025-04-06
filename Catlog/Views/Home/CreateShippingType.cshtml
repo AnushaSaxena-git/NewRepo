@@ -1,0 +1,94 @@
+﻿@model ShipmentModel
+
+@{
+    ViewData["Title"] = "Choose your Shipping Type ";
+}
+
+<h1 class="text-center text-primary mt-5 mb-3">@ViewData["Title"]</h1>
+<h2 class="text-center text-muted mb-5">Shipping Cart <i class="bi bi-cart"></i></h2>
+<hr />
+
+<div class="d-flex justify-content-lg-center">
+<div class="container" style="max-width:600px">
+    <form asp-action="CreateShippingType" method="post">
+        <div class="form-group pt-lg-2 align-content-center">
+            <label asp-for="ShipmentOption" class="control-label">choose Your Shipment Option:</label>
+            <select id="ShipmentOptions" asp-for="ShipmentOption" class="form-control">
+                <option value="">Select Shipment Option</option>
+                @foreach (var option in ViewBag.shipmentOptions)
+                {
+                    <option value="@option.Value">@option.Name</option>
+                }
+            </select>
+            <span asp-validation-for="ShipmentOption" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mt-4" id="fedexOptionsDiv" style="display:none;">
+            <label asp-for="fedexShipments" class="control-label"> Fedex Shipment</label>
+            <select asp-for="fedexShipments" class="form-control">
+                <option value="">Select Fedex Shipment Option</option>
+                @foreach (var option in ViewBag.FedexOptions)
+                {
+                    <option value="@option.Value">@option.Name</option>
+                }
+            </select>
+            <span asp-validation-for="fedexShipments" class="text-danger"></span>
+        </div>
+        <div></div>
+        <div class="form-group mt-4" id="UpsOptionsDiv" style="display:none;">
+            <label asp-for="UpsShipment" class="control-label"> UPS Shipment</label>
+            <select asp-for="UpsShipment" class="form-control">
+                <option value="">Select UPS Shipment Option</option>
+                @foreach (var option in ViewBag.UpsOptions)
+                {
+                    <option value="@option.Value">@option.Name</option>
+                }
+            </select>
+            <span asp-validation-for="UpsShipment" class="text-danger"></span>
+        </div>
+        <div></div>
+        <div class="form-group mt-3">
+            <label asp-for="From" class="control-label"></label>
+            <input asp-for="From" class="form-control" />
+            <span asp-validation-for="From" class="text-danger"></span>
+        </div>
+
+        <div class="form-group mt-3">
+            <label asp-for="Destination" class="control-label"></label>
+            <input asp-for="Destination" class="form-control" />
+            <span asp-validation-for="Destination" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Create Shipping Type</button>
+    </form>
+</div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Initially hide Fedex and UPS option sections
+            $("#UpsOptionsDiv").hide();
+            $("#fedexOptionsDiv").hide();
+
+            // Handle changes in the ShipmentOption dropdown
+            $('#ShipmentOptions').change(function () {
+                var selectedOption = $(this).val();
+
+                // Reset visibility of all options
+                $("#UpsOptionsDiv").hide();
+                $("#fedexOptionsDiv").hide();
+
+                // Show relevant dropdown based on ShipmentOption selection
+                if (selectedOption == "Fedex_Options") {
+                    $("#fedexOptionsDiv").show();
+                }
+                else if (selectedOption == "Ups_Options") {
+                    $("#UpsOptionsDiv").show();
+                }
+            });
+        });
+    </script>
+}

@@ -1,0 +1,211 @@
+﻿@using Catlog.DTO
+@model List<ProductWithSkuDto>
+
+@{
+    ViewData["Title"] = "Add to Cart";
+}
+<div class="container mt-5">
+    <div class="row">
+        <!-- Left Column - Product Info -->
+        <div class="col-md-6">
+            <h1 title="Product name:">@Model.FirstOrDefault()?.Product.product_title</h1>
+
+            <!-- Display Product Description -->
+            <p class="lead">@Model.FirstOrDefault()?.Product.description</p>
+        </div>
+
+        <!-- Right Column - Product Image -->
+        <div class="col-md-6">
+            <div class="product-image text-center">
+                <img src="@Url.Content("~/images/" + Model.FirstOrDefault()?.Product.ProductImage)" alt="Product Image" class="img-fluid" />
+            </div>
+        </div>
+    </div>
+
+    <!-- SKU Details Section -->
+    <div class="card mt-4">
+        <form asp-action="AddToCart" method="post">
+            <input type="hidden" name="productId" value="@Model.FirstOrDefault()?.Product.product_Id"  />
+            <input type="hidden" name="skuId" value="@Model.FirstOrDefault()?.Product.ProductWithSkuDto.SkuId"/>
+            <input type="hidden" name="quantity" value="@Model.FirstOrDefault()?.StockQuantity"
+            
+
+            @if (Model.FirstOrDefault() != null)
+            {
+                var productWithSku = Model.FirstOrDefault();
+                <div class="row">
+                    <!-- SKU Details -->
+                    <div class="sku-item col-md-12">
+                        <h2 class="sku-name text-center mb-4">@productWithSku.SkuName</h2>
+
+                        <div class="row">
+                            <!-- Price and Stock -->
+                            <div class="col-md-4">
+                                <div class="sku-details p-3">
+                                    <p><strong>Price:</strong> @productWithSku.Price.ToString("C")</p>
+                                    <p><strong>Stock Quantity:</strong> @productWithSku.StockQuantity</p>
+                                </div>
+                            </div>
+
+                            <!-- Color Selection -->
+                            <div class="col-md-4">
+                                <div class="sku-colors p-3">
+                                    <label for="color"><strong>Color:</strong></label>
+                                    <select name="color" required class="form-control">
+                                        @foreach (var color in productWithSku.Colors)
+                                        {
+                                            <option value="@color">@color</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Size Selection -->
+                            <div class="col-md-4">
+                                <div class="sku-sizes p-3">
+                                    <label for="size"><strong>Size:</strong></label>
+                                    <select name="size" required class="form-control">
+                                        @foreach (var size in productWithSku.Sizes)
+                                        {
+                                            <option value="@size">@size</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <!-- Material Selection -->
+                            <div class="col-md-4">
+                                <div class="sku-materials p-3">
+                                    <label for="material"><strong>Materials:</strong></label>
+                                    <select name="material" required class="form-control">
+                                        @foreach (var material in productWithSku.Materials)
+                                        {
+                                            <option value="@material">@material</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Quantity Selection -->
+                            <div class="col-md-4">
+                                <div class="sku-quantity p-3">
+                                    <label for="quantity"><strong>Quantity:</strong></label>
+                                    <div class="quantity-controls d-flex align-items-center">
+                                        <button type="button" class="btn btn-outline-secondary" onclick="updateQuantity('@productWithSku.SkuId', false, @productWithSku.StockQuantity)">-</button>
+                                        <input type="number" name="quantity" id="quantity_@productWithSku.SkuId" value="1" min="1" max="@productWithSku.StockQuantity" class="form-control mx-2" required />
+                                        <button type="button" class="btn btn-outline-secondary" onclick="updateQuantity('@productWithSku.SkuId', true, @productWithSku.StockQuantity)">+</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SKU Images -->
+                            <div class="col-md-4">
+                                <div class="sku-images p-3">
+                                    <h4>Images:</h4>
+                                    <div class="d-flex flex-wrap">
+                                        @foreach (var image in productWithSku.Images)
+                                        {
+                                            <img src="@Url.Content("~/images/" + image.ImageName)" alt="Product SKU Image" class="img-thumbnail" style="width: 80px; margin: 5px;" />
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            @* <div class="add-to-cart-section"> *@
+            @*     <form asp-action="AddToCart" method="get"> *@
+            @*         <input type="hidden" name="id" value="@Model.FirstOrDefault().SkuId" /> *@
+            @*         <button type="submit" class="btn btn-info">Add to Cart</button> *@
+            @*     </form> *@
+            @*     <a href="@Url.Action("Details", "Index")" class="btn btn-primary">Add More From Products</a> *@
+            @* </div> *@
+
+            <!-- Add to Cart Button -->
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-primary">Add to Cart</button>
+            </div>
+           
+        </form>
+    </div>
+</div>
+
+<!-- JavaScript to handle quantity increase and decrease -->
+<script>
+    // Function to handle quantity change based on button click
+    function updateQuantity(skuId, increase, stockQuantity) {
+        var quantityInput = document.getElementById("quantity_" + skuId);
+        var currentQuantity = parseInt(quantityInput.value);
+
+        if (increase) {
+            // Increase quantity
+            if (currentQuantity < stockQuantity) {
+                quantityInput.value = currentQuantity + 1;
+            }
+        } else {
+            // Decrease quantity
+            if (currentQuantity > 1) {
+                quantityInput.value = currentQuantity - 1;
+            }
+        }
+    }
+</script>
+
+<!-- CSS to style the layout and quantity controls -->
+<style>
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    .product-image img {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .sku-details, .sku-colors, .sku-sizes, .sku-materials, .sku-quantity, .sku-images {
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+
+    .sku-item {
+        padding: 20px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .quantity-controls button {
+        padding: 5px 10px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .quantity-controls input {
+        width: 50px;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .add-to-cart-btn {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .sku-images img {
+        margin: 5px;
+    }
+
+    .sku-name {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .img-thumbnail {
+        border: 1px solid #ddd;
+        padding: 5px;
+        border-radius: 4px;
+    }
+</style>

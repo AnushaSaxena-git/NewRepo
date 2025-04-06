@@ -1,0 +1,560 @@
+﻿@model Catlog.DTO.ProductDetailsViewModel
+
+@{
+    ViewData["Title"] = "Product Details";
+    Layout = "_Layout1";
+}
+
+<!-- Include Bootstrap & jQuery -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/ltenew/plugins/bootstrap/js/bootstrap.bundle.js"></script>
+
+<div class="container py-5">
+    <div class="row">
+        <!-- Product Image & Thumbnails -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4 text-center">
+                <img id="mainProductImage" src="@Model.ProductImageUrl" alt="@Model.Product.product_title"
+                     class="card-img-top img-fluid rounded" style="width: 100%; max-height: 400px; object-fit: contain; background-color: #f8f9fa;" />
+            </div>
+            <div id="skuImageThumbnails" class="d-flex mt-3 justify-content-center gap-2 flex-wrap">
+                <!-- Thumbnails will be added dynamically -->
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm p-4">
+                <div class="card-body">
+                    <h1 id="productTitle" class="fw-bold text-dark mb-3">@Model.Product.product_title</h1>
+                    <p class="text-muted fs-5">@Model.Product.description</p>
+                    <h3 class="text-success fw-bold">Price: <span id="skuPrice">$100</span></h3>
+
+                    <div class="mt-4 d-flex flex-wrap gap-3">
+                        <button type="button" class="btn btn-primary btn-lg px-4 py-2 shadow-sm" onclick="AddToCart()">🛒 Add to Cart</button>
+                        <a href="@Url.Action("Index", "Home")" class="btn btn-outline-secondary btn-lg px-4 py-2 shadow-sm">🔙 Back to Products</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SKU Information -->
+            <div class="card border-0 shadow-sm mt-4 p-3">
+                <div class="card-header bg-white border-0">
+                    <h4 class="fw-semibold text-dark">SKU Information</h4>
+                </div>
+                <div class="card-body">
+                    <div id="skuList" class="row"></div>
+                </div>
+            </div>
+
+            <!-- Selection Options -->
+            <div class="card border-0 shadow-sm mt-4 p-3">
+                <div class="card-body">
+                    <h5 class="fw-bold text-dark">Select Size:</h5>
+                    <div id="sizeTiles" class="d-flex flex-wrap mb-3 gap-2"></div>
+
+                    <h5 class="fw-bold text-dark">Select Material:</h5>
+                    <div id="materialTiles" class="d-flex flex-wrap mb-3 gap-2"></div>
+
+                    <h5 class="fw-bold text-dark">Select Quantity:</h5>
+                    <select id="quantityDropdown" class="form-select form-select-lg shadow-sm"></select>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let isInitial = true;
+        const productDetails = {
+            productSkus: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductSkus)),
+            availableColors: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableColors)),
+            availableSizes: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableSizes)),
+            availableMaterials: @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.AvailableMaterials)),
+        };
+
+        let filteredSkus = [...productDetails.productSkus];
+        let selectedSkuId = null;
+
+              $(document).ready(function () {
+            displayInitialImages();
+                    populateTiles();
+                    $('.size-tile').on('click', function () {
+                let selectedSize = $(this).data('size'); // Get the selected size
+                $('.size-tile').removeClass('selected'); // Remove previous selection
+                $(this).addClass('selected'); // Add selected class
+
+                updateSKUAvailability(selectedSize);
+            });
+
+            // Select the first available SKU
+            if (productDetails.productSkus.length > 0) {
+                let defaultSku = productDetails.productSkus[0];
+
+                              setDropdowns(defaultSku.SkuId);
+
+                                      setTimeout(() =>{
+                                      selectTile('size' , defaultSku.Sizes[0])
+                        }, 200)
+                                        
+
+                
+            }
+
+            filterSkus();
+        });
+
+                       function displayInitialImages() {
+            let uniqueImages = new Set();
+
+            // Collect images from all SKUs
+            filteredSkus.forEach(sku => {
+                if (sku.Images) {
+                    sku.Images.forEach(img => uniqueImages.add(img.ImageName));
+                }
+            });
+
+            let imagesArray = Array.from(uniqueImages);
+            if (imagesArray.length > 0) {
+                $("#mainProductImage").attr("src", '/images/${imagesArray[0]}'); // Set the first image as default
+            }
+
+            // Populate unique thumbnails
+            $("#skuImageThumbnails").empty();
+            imagesArray.forEach(imgName => {
+                $("#skuImageThumbnails").append(
+                    `<img src="/images/${imgName}" class="sku-thumbnail m-1"
+                         style="width: 60px; height: 60px; cursor: pointer; border-radius: 5px;"
+                         onclick="$('#mainProductImage').attr('src', '/images/${imgName}'')"/>`
+                );
+            });
+                }function updateProductImage(sku) {
+            if (sku && sku.Images && sku.Images.length > 0) {
+                let uniqueImages = [...new Set(sku.Images.map(img => img.ImageName))]; // Ensure uniqueness
+
+                // Update main image
+                $("#mainProductImage").attr("src", `/images/${uniqueImages[0]}`);
+
+                // Clear and populate thumbnails
+                $("#skuImageThumbnails").empty();
+                uniqueImages.forEach(imgName => {
+                    $("#skuImageThumbnails").append(
+                       ` <img src="/images/${imgName}" class="sku-thumbnail m-1"
+                             style="width: 60px; height: 60px; cursor: pointer; border-radius: 5px;"
+                             onclick="$('#mainProductImage').attr('src', '/images/${imgName}')" />`
+                    );
+                });
+            } else {
+                // If no images are available, show a default placeholder
+                $("#mainProductImage").attr("src", "/images/default-placeholder.jpg");
+            }
+        }
+
+
+        function populateTiles() {
+            populateTileList('#colorTiles', productDetails.availableColors, 'color');
+            populateTileList('#sizeTiles', productDetails.availableSizes, 'size');
+            populateTileList('#materialTiles', productDetails.availableMaterials, 'material');
+        }
+
+        function populateTileList(containerId, items, type) {
+            $(containerId).empty();
+            items.forEach(item => {
+                $(containerId).append(
+                    `<div class="tile p-2 m-1 border rounded" data-type="${type}" data-value="${item}" onclick="selectTile('${type}', '${item}')">
+                        ${item}
+                    </div>`
+                );
+            });
+        }
+
+
+               function selectTile(type, value) {
+            selectedAttributes[type] = value;
+
+            // Remove 'selected' class from all elements of the same type
+            $(`div[data-type=${type}]`).removeClass('selected');
+            // Add 'selected' class to the clicked element
+            $(`div[data-type="${type}"][data-value="${value}"]`).addClass('selected');
+
+            updateSkuSelection(type);
+
+            // If the selected type is 'color', update the SKU image
+            if (type === 'color') {
+                updateImageBasedOnColor(value);
+            }
+        }
+
+        function updateImageBasedOnColor(selectedColor) {
+            // Find the first SKU that matches the selected color
+            let matchingSku = filteredSkus.find(sku => sku.Colors.includes(selectedColor));
+
+            if (matchingSku) {
+                updateProductImage(matchingSku);
+            } else {
+                // If no matching SKU, show a default image
+                $("#mainProductImage").attr("src", "/images/default-placeholder.jpg");
+            }
+        }
+
+                      function setDropdowns(skuId) {
+            resetSelection();
+            const sku = filteredSkus.find(x => x.SkuId == skuId);
+
+            if (!sku) {
+                console.error("SKU not found for ID:", skuId);
+                return;
+            }
+
+            console.log("Selected SKU:", sku);
+
+            // Ensure the correct color is selected
+            selectedAttributes.color = sku.Colors[0];
+
+            // Enable all tiles again
+            $(".tile").removeClass("disabled").css("opacity", "1").css("pointer-events", "auto");
+
+            // Highlight selected color
+            $(".color-item").removeClass("selected-sku");
+            $(`#color-${selectedAttributes.color}`).addClass("selected-sku");
+
+            // **Update the SKU selection BEFORE updating the image**
+            selectedSkuId = sku.SkuId;
+
+            // **Ensure the images are logged correctly**
+            console.log("Updating product image for SKU:", sku.SkuId, sku.Images);
+
+            // Update product image only if images exist
+            if (sku.Images && sku.Images.length > 0) {
+                updateProductImage(sku);
+            } else {
+                $("#mainProductImage").attr("src", "/images/default-placeholder.jpg");
+            }
+
+            updateSkuSelection();
+        }
+
+
+
+
+        function updateAvailableSizesAndMaterials(selectedColor) {
+            let matchingSkus = productDetails.productSkus.filter(sku => sku.Colors.includes(selectedColor));
+
+            let availableSizes = new Set();
+            let availableMaterials = new Set();
+
+            matchingSkus.forEach(sku => {
+                sku.Sizes.forEach(size => availableSizes.add(size));
+                sku.Materials.forEach(material => availableMaterials.add(material));
+            });
+
+            // Disable sizes that are not available for the selected color
+            $('#sizeTiles div').each(function () {
+                let size = $(this).data('value');
+                if (availableSizes.has(size)) {
+                    $(this).removeClass('disabled-tile').css('opacity', '1');
+                } else {
+                    $(this).addClass('disabled-tile').css('opacity', '0.5');
+                }
+            });
+
+            // Disable materials that are not available for the selected color
+            $('#materialTiles div').each(function () {
+                let material = $(this).data('value');
+                if (availableMaterials.has(material)) {
+                    $(this).removeClass('disabled-tile').css('opacity', '1');
+                } else {
+                    $(this).addClass('disabled-tile').css('opacity', '0.5');
+                }
+            });
+        }
+
+        function filterSkus() {debugger
+            $('#skuList').empty();
+
+            const uniqueColors = {}; // Store unique colors with the first encountered SKU
+
+            filteredSkus.forEach(sku => {
+                const color = sku.Colors[0]; 
+                if (!uniqueColors[color]) {
+                    uniqueColors[color] = sku; // Store the first SKU encountered for this color
+                }
+            });
+
+            // Rendering unique colors with SKU selection
+            Object.keys(uniqueColors).forEach(color => {
+                const sku = uniqueColors[color];
+
+                   $('#skuList').append(
+                          `  <div class="col-md-2 text-center color-item p-2" id="color-${color}" onclick="setDropdowns(${sku.SkuId})">
+                <div class="p-3 border rounded bg-light">
+                    <h6 class="text-primary">${color}</h6>
+                </div>
+            </div>`
+        );
+
+            });
+
+                    highlightSelectedSku(selectedSkuId, filteredSkus[0]?.Colors[0]);
+        }
+
+                    let selectedAttributes = {
+            color: null,
+            size: null,
+            material: null
+        };
+
+        
+
+
+                       function updateSkuSelection(type) {
+            if (!filteredSkus || !Array.isArray(filteredSkus)) {
+                console.error("filteredSkus is not defined or not an array.");
+                return;
+            }
+
+            const selectedColor = selectedAttributes.color;
+            const selectedSize = selectedAttributes.size;
+            const selectedMaterial = selectedAttributes.material;
+
+            const matchingSku = filteredSkus.find(sku =>
+                (!selectedColor || sku.Colors.includes(selectedColor)) &&
+                (!selectedSize || sku.Sizes.includes(selectedSize)) &&
+                (!selectedMaterial || sku.Materials.includes(selectedMaterial))
+            );
+
+            if (matchingSku) {
+                selectedSkuId = matchingSku.SkuId;
+                $("#skuPrice").html(matchingSku.Price);
+                populateQuantityDropdown(matchingSku.StockQuantity);
+
+                // Highlight selected tiles
+                $(".tile").removeClass("selected");
+                if (selectedColor) $(`.tile[data-type='color'][data-value='${selectedColor}']`).addClass("selected");
+                if (selectedSize) $(`.tile[data-type='size'][data-value='${selectedSize}']`).addClass("selected");
+                if (selectedMaterial) $(`.tile[data-type='material'][data-value='${selectedMaterial}']`).addClass("selected");
+
+                highlightSelectedSku(selectedSkuId, selectedColor);
+            } else {
+                selectedSkuId = null;
+                $("#skuPrice").html("N/A");
+                populateQuantityDropdown(0);
+            }
+
+                    disableUnavailableOptions(type);
+        }
+
+                function populateQuantityDropdown(stockQuantity) {
+            $('#quantityDropdown').empty();
+
+            if (!stockQuantity || stockQuantity <= 0) {
+                $('#quantityDropdown').append(`<option value="0" disabled>Out of Stock</option>`);
+
+
+                resetSelection();  // Reset selections when out of stock
+                return;
+            }
+
+            for (let i = 1; i <= stockQuantity; i++) {
+                $('#quantityDropdown').append(`<option value="${i}">${i}</option>`);
+            }
+        }
+                                        function disableUnavailableOptions(otype) {
+           //         if (selectedSkuId === productDetails.productSkus[0].SkuId && isInitial) {
+           //     return;
+           // }
+
+
+            var list = ['color', 'size', 'material'].filter(x => x != otype);
+            list.forEach(type => {
+                $(`div[data-type="${type}"]`).each(function () {
+                    const value = $(this).attr("data-value");
+
+                    // Ensure at least one SKU matches the selected attributes
+                    const isAvailable = filteredSkus.some(sku =>
+                        (!selectedAttributes.color || sku.Colors.includes(selectedAttributes.color)) &&
+                        (!selectedAttributes.size || sku.Sizes.includes(selectedAttributes.size)) &&
+                        (!selectedAttributes.material || sku.Materials.includes(selectedAttributes.material)) &&
+                        sku[type.charAt(0).toUpperCase() + type.slice(1) + 's'].includes(value) // Ensure this attribute exists
+                    );
+
+                    if (!isAvailable) {
+                        $(this).addClass("disabled").css("opacity", "0.5").css("pointer-events", "none");
+                    } else {
+                        $(this).removeClass("disabled").css("opacity", "1").css("pointer-events", "auto");
+                    }
+                });
+            });
+        }
+
+
+        function highlightSelectedSku(skuId,color) {
+            $('.color-item').removeClass('selected-sku'); // Remove highlight from all
+
+                            let selectedElement = $(`#color-${color}`);
+            if (selectedElement.length) {
+                selectedElement.addClass('selected-sku'); // Add highlight to selected SKU
+            }
+
+            const sku = filteredSkus.find(sku => sku.SkuId === skuId);
+            if (sku) {
+                updateProductImage(sku);
+            }
+        }
+
+                                          
+
+
+        function AddToCart() {
+            const quantity = Number($('#quantityDropdown').find(":selected").val());
+            const selectedSku = filteredSkus.find(sku => sku.SkuId === selectedSkuId);
+
+            if (!selectedSku) {
+                alert('Please select a SKU before adding to cart!');
+                return;
+            }
+
+            const cart = getCartFromCookie();
+            const existingSkuIndex = cart.findIndex(item => item.skuId === selectedSkuId);
+
+            if (existingSkuIndex !== -1) {
+                if (cart[existingSkuIndex].quantity < selectedSku.StockQuantity) {
+                    cart[existingSkuIndex].quantity += 1;
+                } else {
+                    alert("Sorry, stock is not available.");
+                    return;
+                }
+            } else {
+                cart.push({
+                    skuId: selectedSkuId,
+                    skuName: selectedSku.SkuName,
+                    price: selectedSku.Price,
+                    quantity: quantity,
+        color: selectedAttributes.color,  // Corrected here
+                        stockQuantity: selectedSku.StockQuantity,
+                    size: selectedSku.Sizes[0],
+                    material: selectedSku.Materials[0],
+                    imageName: selectedSku.ImageUrl
+                });
+            }
+
+            setCartToCookie(cart);
+            window.location.href = '/Home/Cart';
+        }
+                function resetSelection() {
+            selectedAttributes = {
+                color: null,
+                size: null,
+                material: null
+            };
+
+            // Remove 'selected' class from all tiles
+            // $('.tile').removeClass('selected');
+
+            // Enable all tiles again
+            $('.tile').removeClass('disabled').css('opacity', '1').css('pointer-events', 'auto');
+
+            // Reset SKU selection
+            selectedSkuId = null;
+            $("#skuPrice").html("N/A");
+        }
+
+        function getCartFromCookie() {
+            const cartCookie = getCookie("Cart");
+            return cartCookie ? JSON.parse(decodeURIComponent(cartCookie)) : [];
+        }
+
+        function setCartToCookie(cart) {
+            const cookieValue = JSON.stringify(cart);
+            document.cookie = "Cart=" + encodeURIComponent(cookieValue) + "; path=/; max-age=" + (7 * 24 * 60 * 60);
+        }
+
+        function getCookie(name) {
+            const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+            return match ? match[2] : null;
+        }
+
+                function updateSKUAvailability(selectedSize) {
+                $('.sku-tile').removeAttr('disabled'); // Re-enable all SKUs
+
+                $('.sku-tile').each(function () {
+                    let availableSizes = $(this).data('sizes'); // Get available sizes for this SKU
+
+                    if (!availableSizes.includes(selectedSize)) {
+                        $(this).attr('disabled', 'disabled'); // Disable SKU if size is unavailable
+                    }
+                });
+            }
+     
+    </script>
+}
+
+<style>
+    .selected-sku {
+        border: 2px solid #007bff !important;
+        background-color: #e7f0ff !important;
+    }
+
+    .tile {
+        cursor: pointer;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        margin: 5px;
+        display: inline-block;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+    }
+
+        .tile:hover {
+            background-color: #f0f0f0;
+        }
+
+        .tile.selected {
+            background-color: #007bff;
+            color: white;
+            font-weight: bold;
+        }
+
+        .tile.disabled {
+            opacity: 0.6; /* Slightly more visible but still disabled */
+            background-color: #808080 !important; /* Dark gray */
+            pointer-events: none;
+            color: #ffffff; /* White text */
+            text-decoration: line-through; /* Cross out disabled options */
+        }
+
+
+
+    .color-item {
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+        .color-item.selected-sku {
+            border: 3px solid #ff0000 !important; /* Red border for emphasis */
+            background-color: #ffe6e6 !important; /* Light red background */
+            font-weight: bold;
+            transform: scale(1.1); /* Slight size increase */
+            transition: all 0.3s ease-in-out;
+        }
+
+
+        .color-item.selected {
+            border: 2px solid #007bff;
+            background-color: #e7f0ff;
+        }
+
+    .price-text {
+        font-size: 1.5rem; /* Adjust the font size as needed */
+        font-weight: bold; /* Make the text bold */
+        color: red; /* Green color (you can change this) */
+    }
+
+    /* Optional: Custom styling for the price when SKU is selected */
+    .highlight .price-text {
+        color: #007bff; /* Change to blue when selected */
+    }
+</style>

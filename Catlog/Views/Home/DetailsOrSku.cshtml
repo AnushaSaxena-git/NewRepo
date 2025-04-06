@@ -1,0 +1,105 @@
+﻿@model dynamic
+@using Catlog.DTO
+
+@{
+    ViewData["Title"] = "Product or SKU Details";
+}
+
+@if (Model is ProductWithSkuDto skuDto)
+{
+   <h2>SKU Details</h2>
+    <div class="card">
+        <h3>Product Title: @skuDto.Product.product_title</h3>
+        <p><strong>Description:</strong> @skuDto.Product.description</p>
+        <p><strong>Category:</strong> @skuDto.Product.category_Id</p>
+        <p><strong>Country of Origin:</strong> @skuDto.Product.country_origin</p>
+
+        <!-- Display Product Image -->
+        <div>
+            <img src="@Url.Content("~/images/" + skuDto.Product.ProductImage)" alt="@skuDto.Product.product_title" />
+        </div>
+
+        <h4>SKU Information</h4>
+        <p><strong>SKU Name:</strong> @skuDto.SkuName</p><br />
+        <p><strong>SKU Color:</strong> @string.Join(", ", skuDto.Colors)</p><br />
+        <p><strong>SKU Size:</strong> @string.Join(", ", skuDto.Sizes)</p><br />
+        <p><strong>Material:</strong> @string.Join(", ", skuDto.Materials)</p><br />
+        <p><strong>Price:</strong> @skuDto.Price</p><br />
+        <p><strong>Stock Quantity:</strong> @skuDto.StockQuantity</p><br />
+
+        <h4>SKU Images</h4>
+        @if (skuDto.Images != null && skuDto.Images.Any())
+        {
+            <div>
+                @foreach (var image in skuDto.Images)
+                {
+                    <img src="@Url.Content("~/images/" + image.ImageName)" alt="SKU Image" class="sku-image" style="width:55px" />
+                }
+            </div>
+        }
+        else
+        {
+            <p>No SKU images available.</p>
+        }
+
+        <br />
+        <a href="@Url.Action("DetailsOrSku", new { id = skuDto.Product.product_Id, isSku = false })">View Product Details</a>
+
+    </div>
+
+}
+else if (Model is List<ProductWithSkuDto> productWithSkus)
+{
+    <h2>Product Details</h2>
+
+    @foreach (var productSkuDto in productWithSkus)
+    {
+        <div class="product-sku">
+            <h3>Product: @productSkuDto.Product.product_title</h3>
+            <p><strong>Description:</strong> @productSkuDto.Product.description</p>
+            <p><strong>Category:</strong> @productSkuDto.Product.category_Id</p>
+            <p><strong>Country of Origin:</strong> @productSkuDto.Product.country_origin</p>
+
+
+            <!-- Main Product Image -->
+            <div>
+                <img src="@Url.Content("~/images/" + productSkuDto.Product.ProductImage)" alt="@productSkuDto.Product.product_title"  style="width:55px"/>
+            </div>
+            <div class="card ">
+                <div class="container d-flex align-content-center">
+
+            <h4>SKU Information</h4>
+            <p><strong>SKU Name:</strong> @productSkuDto.SkuName</p>
+            <p><strong>SKU Color:</strong> @string.Join(", ", productSkuDto.Colors)</p><br />
+            <p><strong>SKU Size:</strong> @string.Join(", ", productSkuDto.Sizes)</p><br />
+            <p><strong>Material:</strong> @string.Join(", ", productSkuDto.Materials)</p><br />
+            <p><strong>Price:</strong> @productSkuDto.Price</p><br />
+            <p><strong>Stock Quantity:</strong> @productSkuDto.StockQuantity</p><br />
+
+            <h4>SKU Images</h4>
+            @if (productSkuDto.Images != null && productSkuDto.Images.Any())
+            {
+                <div>
+                    @foreach (var image in productSkuDto.Images)
+                    {
+                        <img src="@Url.Content("~/images/" + image.ImageName)" alt="SKU Image" class="sku-image" style="width:55px" />
+                    }
+                </div>
+            }
+            else
+            {
+                <p>No SKU images available.</p>
+            }
+
+            <br />
+            <a href="@Url.Action("DetailsOrSku", new { id = productSkuDto.Product.product_Id, isSku = true })">View SKU Details</a>
+            </div>
+            <hr />
+        </div>
+        </div>
+    }
+}
+else
+{
+    <p>Invalid data provided.</p>
+}

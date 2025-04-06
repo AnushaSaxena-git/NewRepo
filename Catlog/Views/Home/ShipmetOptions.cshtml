@@ -1,0 +1,144 @@
+﻿
+@model Catlog.Models.ShippingType
+
+@{
+    ViewData["Title"] = "Create Shipping Type";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div class="d-flex justify-content-center">
+    <div style="max-width:600px">
+<div class="card-body mt-5">
+
+            <form asp-action="CreateShippingType enctype="multipart/form-data">
+    <div class="form-group align-content-center pt-lg-5" >
+        <label for="ShipmentOptions">Shipment Option</label>
+        <select id="ShipmentOptions" name="ShipmentOptions" class="form-control">
+            <option value="">Select Shipment Option</option>
+            @foreach (var option in ViewBag.ShipmentOptions)
+            {
+                <option value="@option.Value">@option.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group" id="ExpeditedOptionsDiv" style="display:none;">
+        <label for="ExpeditedDeliveryOption">Expedited Delivery Option</label>
+        <select id="ExpeditedDeliveryOption" name="ExpeditedDeliveryOption" class="form-control">
+            <option value="">Select Expedited Delivery Option</option>
+            @foreach (var option in ViewBag.ExpeditedDeliveryOptions)
+            {
+                <option value="@option.Value">@option.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group" id="StandardOptionsDiv" style="display:none;">
+        <label for="StandardDeliveryOption">Standard Delivery Option</label>
+        <select id="StandardDeliveryOption" name="StandardDeliveryOption" class="form-control">
+            <option value="">Select Standard Delivery Option</option>
+            @foreach (var option in ViewBag.StandardDeliveryOptions)
+            {
+                <option value="@option.Value">@option.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group" id="InternationalOptionsDiv" style="display:none;">
+        <label for="InternationalExpeditedServiceOption">International Expedited Service Option</label>
+        <select id="InternationalExpeditedServiceOption" name="InternationalExpeditedServiceOption" class="form-control">
+            <option value="">Select International Expedited Service Option</option>
+            @foreach (var option in ViewBag.InternationalExpeditedServiceOptions)
+            {
+                <option value="@option.Value">@option.Name</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group" id="FreightOptionsDiv" style="display:none;">
+        <label for="LessThanTruckLoadFreight">Freight Delivery Option</label>
+        <select id="LessThanTruckLoadFreight" name="LessThanTruckLoadFreight" class="form-control">
+            <option value="">Select Freight Option</option>
+            @foreach (var option in ViewBag.LessThanTruckLoadFreightOptions)
+            {
+                <option value="@option.Value">@option.Name</option>
+            }
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create Shipping Type</button>
+</form>
+</div>
+</div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script type="text/javascript">
+        // Function to handle dependent dropdowns
+        $(document).ready(function () {
+            // Hide all dependent dropdowns initially
+            $("#ExpeditedOptionsDiv").hide();
+            $("#StandardOptionsDiv").hide();
+            $("#InternationalOptionsDiv").hide();
+            $("#FreightOptionsDiv").hide();
+
+            // On change of Shipment Option
+            $('#ShipmentOptions').change(function () {
+                var selectedOption = $(this).val();
+
+                // Reset all other dropdowns
+                $("#ExpeditedOptionsDiv").hide();
+                $("#StandardOptionsDiv").hide();
+                $("#InternationalOptionsDiv").hide();
+                $("#FreightOptionsDiv").hide();
+
+                // Show the correct dropdown based on Shipment Option selected
+                if (selectedOption == "Fedex_Same_Day" || selectedOption == "Expedited") {
+                    $("#ExpeditedOptionsDiv").show();
+                } else if (selectedOption == "Fedex_Standard") {
+                    $("#StandardOptionsDiv").show();
+                } else if (selectedOption == "International") {
+                    $("#InternationalOptionsDiv").show();
+                } else if (selectedOption == "Freight") {
+                    $("#FreightOptionsDiv").show();
+                }
+            });
+        });
+            $('form').on('submit', function (e) {
+                e.preventDefault();  // Prevent the default form submission
+
+                var formData = new FormData(this); 
+
+                $.ajax({
+                    url: '@Url.Action("CreateShippingType", "Shipping")',  //this is my action url of create shipment page 
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,  // Tell jQuery not to set content type
+                    processData: false,  // Tell jQuery not to process data
+                    success: function (response) {
+                        // On successful submission
+                        alert("Shipping Type created successfully.");
+                        window.location.href = '@Url.Action("Index", "Shipping")';  // Redirect to another page (optional)
+                    },
+                    error: function (error) {
+                        // On error
+                        alert("Error while creating Shipping Type.");
+                    }
+                });
+            });
+        
+                success: function (response) {
+            if (response.success) {
+                // Show success message
+                alert(response.message);
+                window.location.href = '@Url.Action("Index", "Shipping")';  // Redirect to index page or another view
+            } else {
+                // Show error message
+                alert(response.message);
+            }
+        }
+
+    </script>
+}

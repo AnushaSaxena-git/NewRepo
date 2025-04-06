@@ -1,0 +1,123 @@
+﻿@model Catlog.DTO.ProductDto
+
+<h1 class="text-center mb-4 text-primary">Add Product</h1>
+<h4 class="text-center mb-4 text-muted">Product SKU Details</h4>
+<hr class="my-4" />
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <form asp-action="InsertProductAndSku" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+
+            <!-- Product Information Fields -->
+            <div class="form-group">
+                <label for="ProductName">Product Name</label>
+
+                <input type="text" id="ProductName" class="form-control" name="productName" placeholder="Enter Product Name" required />
+            </div>
+
+            <div class="form-group">
+                <label for="product_image">Product Image</label>
+                <input type="file" id="product_image" class="form-control" name="product_image" accept="image/*" />
+            </div>
+
+            <div class="form-group">
+                <label for="Category">Category</label>
+                <select id="Category" class="form-control" name="categoryId" required>
+                    <option value="">Select Category</option>
+                    @foreach (var category in ViewBag.categories)
+                    {
+                        <option value="@category.category_Id">@category.category_Name</option>
+                    }
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="CountryOrigin">Country of Origin</label>
+                <input type="text" id="CountryOrigin" class="form-control" name="countryOrigin" placeholder="Enter Country Origin" required />
+            </div>
+
+            <div class="form-group">
+                <label for="Description">Description</label>
+                <input type="text" id="Description" class="form-control" name="description" placeholder="Enter Description" required />
+            </div>
+
+            <!-- Size Input Fields (Dynamic) -->
+            <div class="form-group">
+                <label for="Size">Size</label>
+                <select id="Size" name="size" class="form-control" multiple>
+                    <option value="S">Small</option>
+                    <option value="M">Medium</option>
+                    <option value="L">Large</option>
+                    <option value="XL">Extra Large</option>
+                </select>
+            </div>
+
+            <!-- Material Input Fields (Dynamic) -->
+            <div class="form-group">
+                <label for="Material">Material</label>
+                <select id="Material" name="material" class="form-control" multiple>
+                    <option value="Cotton">Cotton</option>
+                    <option value="Polyester">Polyester</option>
+                    <option value="Leather">Leather</option>
+                </select>
+            </div>
+
+            <!-- Color Input Fields (Dynamic) -->
+            <div class="form-group">
+                <label for="Color">Color</label>
+                <select id="Color" name="color" class="form-control" multiple>
+                    <option value="Red">Red</option>
+                    <option value="Blue">Blue</option>
+                    <option value="Green">Green</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-group text-center">
+                <input type="submit" value="Insert Product" class="btn btn-primary btn-lg" />
+            </div>
+        </form>
+    </div>
+
+    <div>
+    </div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Styles {
+    <style>
+        /* Custom Styling for the Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .col-md-10 {
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input.form-control, select.form-control {
+            border-radius: 0.375rem;
+            box-shadow: none;
+        }
+
+            input.form-control:focus, select.form-control:focus {
+                border-color: #0056b3;
+                box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+            }
+    </style>
+}
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+
+    <script type="text/javascript">
+        // Initialize select2 on page load
+        $(document).ready(function() {
+            $('select[multiple]').select2();
+        });
+    </script>
+}

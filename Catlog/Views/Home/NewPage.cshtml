@@ -1,0 +1,190 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model Catlog.DTO.ProductDetailsViewModel
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<!-- Include Bootstrap and jQuery -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Main Product Section -->
+<div class="main-product pt-lg-4">
+    <div class="row">
+        <!-- Display Main Product Image -->
+        <div class="main-product-image col-md-6">
+            <img id="mainProductImage" src="@Model.ProductImageUrl" alt="@Model.Product.product_title" class="main-product-image img-fluid" />
+            <div class="add-to-cart-section mt-3">
+                <a href="@Url.Action("Index", "Home")" class="btn btn-secondary mt-2">Back to Products</a>
+            </div>
+        </div>
+
+        <!-- Filters Section -->
+        <div class="filters col-md-6">
+            <h2>Filter Options</h2>
+            <form id="filterForm">
+                <div class="form-group">
+                    <label for="color">Select Color:</label>
+                    <select name="selectedColor" id="color" class="form-control">
+                        <option value="">--Select Color--</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="size">Select Size:</label>
+                    <select name="selectedSize" id="size" class="form-control">
+                        <option value="">--Select Size--</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Select Material:</label><br />
+                    <div id="materialFilters" class="form-check form-check-inline"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="sku">Select SKU:</label>
+                    <select name="selectedSku" id="sku" class="form-control">
+                        <option value="">--Select SKU--</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- SKU Information Table -->
+    <div class="sku-details col-md-6 mt-4">
+        <h2>SKU Information</h2>
+        <table class="table table-bordered text-center table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th>SKU Name</th>
+                    <th>Price</th>
+                    <th>Stock Quantity</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="skuTableBody"></tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let productDetails = {
+            product: {
+                product_Id: 1,  // Sample product ID
+                product_title: "Sample Product",
+                // Add other product details here if needed
+            },
+            productSkus: [], // List of SKUs
+            availableColors: [], // List of available colors
+            availableSizes: [], // List of available sizes
+            availableMaterials: [], // List of available materials
+        };
+
+        function fetchProductDetails() {
+            // Replace this with an AJAX call to fetch product data from your backend
+            $.ajax({
+                url: '/your/api/endpoint', // Change this to your API endpoint to fetch product details
+                method: 'GET',
+                data: { id: productDetails.product.product_Id },
+                success: function (data) {
+                    productDetails = data;
+
+                    // Populate the filters based on fetched data
+                    populateFilters();
+                    displayProductInfo();
+                }
+            });
+        }
+
+        function populateFilters() {
+            // Populate color filter options
+            let colorSelect = $('#color');
+            productDetails.availableColors.forEach(color => {
+                colorSelect.append(new Option(color, color));
+            });
+
+            // Populate size filter options
+            let sizeSelect = $('#size');
+            productDetails.availableSizes.forEach(size => {
+                sizeSelect.append(new Option(size, size));
+            });
+
+            // Populate material filter options
+            let materialFilters = $('#materialFilters');
+            productDetails.availableMaterials.forEach(material => {
+                materialFilters.append(`
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="radio" name="selectedMaterial" value="${material}" />
+                        <label class="form-check-label">${material}</label>
+                    </div>
+                `);
+            });
+        }
+
+        function displayProductInfo() {
+            // Display the product image (or first available image)
+            $('#mainProductImage').attr('src', productDetails.product.productImageUrl);
+
+            // Display SKU information
+            let skuTableBody = $('#skuTableBody');
+            skuTableBody.empty();
+            productDetails.productSkus.forEach(sku => {
+                skuTableBody.append(`
+                    <tr>
+                        <td>${sku.skuName}</td>
+                        <td>${sku.price}</td>
+                        <td>${sku.stockQuantity}</td>
+                        <td>
+                            <button type="button" class="btn btn-info" onclick="viewSkuDetails(${sku.skuId})">View Details</button>
+                            <button type="button" class="btn btn-primary" onclick="addToCart(${sku.skuId})">Add to Cart</button>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        function applyFilters() {
+            let selectedColor = $('#color').val();
+            let selectedSize = $('#size').val();
+            let selectedMaterial = $('input[name="selectedMaterial"]:checked').val();
+
+            // Apply filters to SKUs
+            let filteredSkus = productDetails.productSkus.filter(sku => {
+                return (!selectedColor || sku.colors.includes(selectedColor)) &&
+                    (!selectedSize || sku.sizes.includes(selectedSize)) &&
+                    (!selectedMaterial || sku.materials.includes(selectedMaterial));
+            });
+
+            // Display filtered SKUs
+            productDetails.productSkus = filteredSkus;
+            displayProductInfo();
+        }
+
+        function viewSkuDetails(skuId) {
+            // Open SKU details page or display details (you can modify this function as needed)
+            console.log(`Viewing details for SKU ID: ${skuId}`);
+        }
+
+        function addToCart(skuId) {
+            // Add the selected SKU to the cart (you can modify this function to interact with your cart system)
+            console.log(`Adding SKU ID ${skuId} to cart`);
+        }
+
+        // Initialize product details on page load
+        $(document).ready(function () {
+            fetchProductDetails();
+        });
+    </script>
+}

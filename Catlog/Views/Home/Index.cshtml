@@ -1,0 +1,134 @@
+﻿@model IEnumerable<Catlog.DTO.ProductWithSkuDto>
+@{
+    Layout = "_Layout1";
+}
+ 
+<div class="container card-body">
+    <div class="row">
+        <!-- Search and Category Filter Form -->
+        <div class="col-md-12">
+            <form method="get" class="form-inline d-flex align-items-center">
+                <!-- Search Input -->
+                <input type="text" name="searchTerm" class="form-control mr-2" placeholder="Search..." value="@Context.Request.Query["searchTerm"]" />
+
+                <!-- Category Filter Dropdown -->
+                <select name="categoryId" class="form-control mr-2">
+                    <option value="">Select Category</option>
+                    @foreach (var category in ViewBag.Categories as List<Category>)
+                    {
+                        int categoryId;
+                        int.TryParse(Context.Request.Query["categoryId"], out categoryId);
+                        <option value="@category.category_Id"> @(category.category_Id == categoryId ? "selected" : "")@category.category_Name</option>
+                    }
+                </select>
+
+                <!-- Search Button -->
+                <button type="submit" class="btn btn-primary ml-5">Search</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Table of Products -->
+    <div class="table-responsive table-bordered text-center table-hover table-borderless align-content-lg-end border-bottom table-striped mt-5 card-body">
+        <div class="table-wrapper">
+            <div class="table-title" style="background-color:darkslategrey;color:white">
+                <div class="row">
+                    <div class="col-xs-6">
+                        <h2><b>Manage Products</b></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <table class="table table-hover">
+                    <thead style="color:burlywood" class="thead-dark">
+                        <tr>
+                            <th>Product Title</th>
+                            <th>Product ID</th>
+                            <th>Category Name</th> <!-- Changed to Category Name -->
+                            <th>Description</th>
+                            <th>Image</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (!Model.Any())
+                        {
+                            <tr>
+                                <td colspan="6" class="text-center">No products found matching the criteria.</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            @foreach (var productSku in Model)
+                            {
+                                // Get the category name by matching category_Id
+                                var categoryName = (ViewBag.Categories as List<Category>)
+                                    .FirstOrDefault(c => c.category_Id == productSku.Product.category_Id)?.category_Name;
+
+                                <tr>
+                                    <td>@productSku.Product.product_title</td>
+                                    <td>@productSku.Product.product_Id</td>
+                                    <td>@categoryName</td> <!-- Display the category name -->
+                                    <td>@productSku.Product.description</td>
+                                    <td>
+                                        @if (productSku.Product.ProductImage != null && !string.IsNullOrEmpty(productSku.Product.ProductImage))
+                                        {
+                                            var imagePath = "/images/" + productSku.Product.ProductImage;
+                                            <img src="@Url.Content(imagePath)" alt="Product Image" class="img-fluid" style="max-width: 50px;" />
+                                        }
+                                        else
+                                        {
+                                            <span>No image available</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <form method="post" asp-action="Detailsss" asp-route-id="@productSku.Product.product_Id" style="display:inline-block;">
+                                            <button type="submit" class="btn btn-danger btn-sm" style="background-color:cadetblue"><i class="bi bi-eye-fill"></i></button>
+                                        </form>
+                                        <form method="get" asp-action="DeleteProduct" asp-route-id="@productSku.Product.product_Id" style="display:inline-block;">
+                                            <button type="submit" class="btn btn-danger btn-sm"><i class="bi bi-trash"></i></button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="row">
+        <div class="col-md-12 text-center">
+            @if (ViewBag.TotalProducts > ViewBag.PageSize)
+            {
+                <ul class="pagination">
+                    <!-- Previous Button -->
+                    @if (ViewBag.PageNumber > 1)
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { pageNumber = ViewBag.PageNumber - 1, searchTerm = Context.Request.Query["searchTerm"], categoryId = Context.Request.Query["categoryId"], minPrice = Context.Request.Query["minPrice"], maxPrice = Context.Request.Query["maxPrice"] })">Previous</a>
+                        </li>
+                    }
+
+                    <!-- Page Numbers -->
+                    @for (int i = 1; i <= Math.Ceiling((double)ViewBag.TotalProducts / ViewBag.PageSize); i++)
+                    {
+                        <li class="page-item @(i == ViewBag.PageNumber ? "active" : "")">
+                            <a class="page-link" href="@Url.Action("Index", new { pageNumber = i, searchTerm = Context.Request.Query["searchTerm"], categoryId = Context.Request.Query["categoryId"], minPrice = Context.Request.Query["minPrice"], maxPrice = Context.Request.Query["maxPrice"] })">@i</a>
+                        </li>
+                    }
+
+                    <!-- Next Button -->
+                    @if (ViewBag.PageNumber < Math.Ceiling((double)ViewBag.TotalProducts / ViewBag.PageSize))
+                    {
+                        <li class="page-item">
+                            <a class="page-link" href="@Url.Action("Index", new { pageNumber = ViewBag.PageNumber + 1, searchTerm = Context.Request.Query["searchTerm"], categoryId = Context.Request.Query["categoryId"], minPrice = Context.Request.Query["minPrice"], maxPrice = Context.Request.Query["maxPrice"] })">Next</a>
+                        </li>
+                    }
+                </ul>
+            }
+        </div>
+    </div>
+</div>

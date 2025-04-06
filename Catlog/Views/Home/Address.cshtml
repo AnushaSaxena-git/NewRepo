@@ -1,0 +1,89 @@
+﻿
+@{
+    ViewData["Title"] = "Address";
+}
+
+
+@model AddressViewModel
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+<h1 class="text-center text-primary mt-5 mb-3">@ViewData["Title"]</h1>
+<h2 class="text-center text-muted mb-5">Shipping Cart <i class="bi bi-cart"></i></h2>
+<hr />
+
+<div class="d-flex justify-content-lg-center">
+    <div class="container" style="max-width:600px">
+        <form asp-action="Address" method="post">
+           
+
+           
+           <div class="row">
+            
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="FirstName" class="control-label">First Name</label>
+            
+                <input asp-for="FirstName" class="form-control" required />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="LastName" class="control-label"> Last Name</label>
+                <input asp-for="LastName" class="form-control" required />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            </div>
+            <div class="row">
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="AddressLine1" class="control-label"> Address Line 1:</label>
+                <input asp-for="AddressLine1" class="form-control" />
+                <span asp-validation-for="AddressLine1" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="AddressLine2" class="control-label">Address Line 2:</label>
+                <input asp-for="AddressLine2" class="form-control" />
+                <span asp-validation-for="AddressLine2" class="text-danger"></span>
+            </div>
+            </div>
+            <div class="row">
+
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="City" class="control-label"> City </label>
+                <input asp-for="City" class="form-control" required />
+                <span asp-validation-for="City" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="State" class="control-label">State</label>
+                <input asp-for="State" class="form-control" required />
+                <span asp-validation-for="State" class="text-danger"></span>
+            </div>
+            </div>
+            <div class="row">
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="PostalCode" class="control-label">Postal Code</label>
+                <input asp-for="PostalCode" class="form-control" required />
+                <span asp-validation-for="PostalCode" class="text-danger"></span>
+            </div> 
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="Country" class="control-label">Country</label>
+                <input asp-for="Country" class="form-control"  required/>
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            </div>
+            <div class="row">
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="PhoneNumber" class="control-label"> Phone Number </label>
+                <input asp-for="PhoneNumber" class="form-control" required />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group mt-3 col-md-6">
+                <label asp-for="Country" class="control-label"> Country</label>
+                <input asp-for="Country" class="form-control"  required/>
+                <span asp-validation-for="Country" class="text-danger"></span>
+            </div>
+            </div>
+
+         
+            <button type="submit" class="btn btn-primary btn-block pb-2">Confirm Order </button>
+        </form>
+    </div>
+</div>

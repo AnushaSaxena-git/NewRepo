@@ -1,0 +1,495 @@
+﻿@model Catlog.DTO.ProductWithSkuDto
+@{
+   Layout = "_Layout1";
+}
+
+@section Scripts {
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Initially hide Fedex and UPS option sections
+            $("#UpsOptionsDiv").hide();
+            $("#fedexOptionsDiv").hide();
+
+            // Handle changes in the ShipmentOption dropdown
+            $('#ShipmentOptions').change(function () {
+                var selectedOption = $(this).val();
+
+                // Reset visibility of all options
+                $("#UpsOptionsDiv").hide();
+                $("#fedexOptionsDiv").hide();
+
+                // Show relevant dropdown based on ShipmentOption selection
+                if (selectedOption == "Fedex_Options") {
+                    $("#fedexOptionsDiv").show();
+                }
+                else if (selectedOption == "Ups_Options") {
+                    $("#UpsOptionsDiv").show();
+                }
+            });
+        });
+    </script>
+    <style>
+        .remove-btn {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: .7rem;
+            top: -5px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .wrapper-thumb {
+            position: relative;
+            display: inline-block;
+            margin: 1rem 0;
+            justify-content: space-around;
+        }
+    </style>
+}
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+      integrity="sha256-9kPW/n5nn53j4WMRYAxe9c1rCY96Oogo/MKSVdKzPmI="
+      crossorigin="anonymous" />
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+
+<h1 class="text-center mb-4 text-primary">Add Product and SKU's</h1>
+
+<h4 class="text-center mb-4 text-muted">Product and SKU Details
+
+    <form asp-action="Cart" method="get">
+        <input type="hidden" name="skuId" value="@Model.SkuId" />
+        <input type="hidden" name="productId" value="@Model.Product.product_Id" />
+        <input type="hidden" name="quantity" value="1" />
+        @* <input type="hidden" name="quantity" value="1" /> <!-- You can make quantity dynamic --> *@
+        <button type="submit" class="btn btn-info" style="width:50px;background-color:grey;margin-left:1010px;padding:revert;margin-bottom:10px"><i class="bi bi-cart"></i></button>
+    </form>
+
+
+</h4>
+
+
+
+
+<form asp-action="Index" method="get">
+
+    @* <input type="hidden" name="quantity" value="1" /> <!-- You can make quantity dynamic --> *@
+    <button type="submit" class="btn btn-primary col-md-6" style="margin-left:300px;background-color:dimgrey;align-content:center;"> View Added Products <i class="bi bi-cart"></i></button>
+
+</form>
+
+
+
+<hr class="my-4" />
+
+<div class="row justify-content-center">
+    <div class="col-md-10 mb-5">
+        <form asp-action="InsertProductAndSku" method="post" enctype="multipart/form-data" id="productForm" required>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
+            <div class="card" style="border-color:burlywood; margin-left:auto">
+                <!-- Product Information Section -->
+                <h5 class="text-muted m-lg-2">Product Information</h5>
+
+                <div class="card col-md-12" style="border-color:burlywood">
+                    <div class="row m-lg-2">
+                        <div class="form-group col-md-6">
+                            <label for="ProductName">Product Name</label>
+                            <input type="text" id="ProductName" class="form-control" name="ProductName" required placeholder="Enter Product Name" style="border-color:burlywood" />
+                            <span class="error-message text-danger" id="ProductNameError"></span> <!-- Error message span -->
+
+                        </div>
+
+                        <div class="form-group col-md-6">
+                            <label for="product_image">Product Image</label>
+                            <input type="file" id="product_image" class="form-control" name="product_image" accept="image/*" required multiple style="border-color:burlywood;" />
+
+                            <button type="button" class="btn btn-secondary" id="addMoreImages" required style="display:none; width:40px" title="Add more images">
+                                <i class="bi bi-plus"></i>
+                            </button>
+                            <span class="error-message text-danger" id="product_imageError"></span> <!-- Error message span -->
+
+                            @* <input type="file" id="product_image" class="form-control" name="ProductImage[]" accept="image/*" multiple style="display:none; border-color:burlywood " /> *@
+                            <div class="wrapper-thumb mt-2"></div>
+                        </div>
+                    </div>
+
+                    <div class="row row-cols-md-2">
+                        <div class="form-group col-md-6 m-3">
+                            <label for="Category">Category</label>
+                            <select id="Category" class="form-control" name="categoryId" required style="border-color:burlywood">
+                                <option value="">Select Category</option>
+                                @foreach (var category in ViewBag.Categories)
+                                {
+                                    <option value="@category.category_Id">@category.category_Name</option>
+                                }
+
+                            </select>
+                            <span class="error-message text-danger" id="CategoryError"></span> <!-- Error message span -->
+                           
+                        </div>
+
+                        <div class="form-group col-md-6 m-3">
+                            <label for="CountryOrigin">Country of Origin</label>
+                            <input type="text" id="CountryOrigin" class="form-control" name="CountryOrigin" placeholder="Enter Country Origin" required style="border-color:burlywood" />
+                            <span class="error-message text-danger" id="CountryOriginError"></span> <!-- Error message span -->
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row m-lg-2">
+                    <div class="form-group col-md-12 row-cols-3">
+                        <label for="Description">Description</label>
+                        <textarea id="Description" class="form-control" name="Description" placeholder="Enter Description" aria-label="with textarea" required style=" height:100px;border-color:burlywood"></textarea>
+
+                        <span class="error-message text-danger" id="DescriptionError"></span> <!-- Error message span -->
+
+                    </div>
+                </div>
+            </div>
+            <br /><br />
+
+            <!-- Product Variants Section -->
+            <div class="card" style="border-color:burlywood">
+                <h5 class="text-muted m-lg-1 m-2">Product Variants</h5>
+                <div class="card mt-2">
+                    <table class="table table-bordered m-0">
+                        <thead>
+                            <tr>
+                                <th>Color</th>
+                                <th>Size</th>
+                                <th>Material</th>
+                                <th>Price</th>
+                                <th>Stock Quantity</th>
+                                <th>SKU Name</th>
+                                <th>Product Image</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="newinput">
+                            <!-- Dynamic rows will be added here -->
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn btn-dark" id="rowAdder" style="background-color:darkslategrey">Add Variant</button>
+                </div>
+
+                @* Shipping Section *@
+                @{
+                    ViewData["Title"] = "Choose your Shipping Type ";
+                }
+
+                <h1 class="text-center text-primary mt-5 mb-3">@ViewData["Title"]</h1>
+                <h2 class="text-center text-muted mb-5">Shipping Cart <i class="bi bi-cart"></i></h2>
+                <hr />
+
+                <div class="d-flex justify-content-lg-center">
+                    <div class="container" style="max-width:600px">
+                        <form asp-action="CreateShippingType" method="post">
+                            <div class="form-group pt-lg-2 align-content-center">
+                                <label asp-for="ShipmentOption" class="control-label">Choose Your Shipment Option:</label>
+                                <select id="ShipmentOptions" asp-for="ShipmentOption" class="form-control">
+                                    <option value="">Select Shipment Option</option>
+                                    @foreach (var option in ViewBag.shipmentOptions)
+                                    {
+                                        <option value="@option.Value">@option.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="ShipmentOption" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mt-4" id="fedexOptionsDiv" style="display:none;">
+                                <label asp-for="FedexShipments" class="control-label"> Fedex Shipment</label>
+                                <select asp-for="FedexShipments" class="form-control">
+                                    <option value="">Select Fedex Shipment Option</option>
+                                    @foreach (var option in ViewBag.FedexOptions)
+                                    {
+                                        <option value="@option.Value">@option.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="FedexShipments" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mt-4" id="UpsOptionsDiv" style="display:none;">
+                                <label asp-for="UpsShipment" class="control-label"> UPS Shipment</label>
+                                <select asp-for="UpsShipment" class="form-control">
+                                    <option value="">Select UPS Shipment Option</option>
+                                    @foreach (var option in ViewBag.UpsOptions)
+                                    {
+                                        <option value="@option.Value">@option.Name</option>
+                                    }
+                                </select>
+                                <span asp-validation-for="UpsShipment" class="text-danger"></span>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label asp-for="From" class="control-label"></label>
+                                <input asp-for="From" class="form-control" />
+                                <span asp-validation-for="From" class=" error-message text-danger" id=FromError></span>
+
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <label asp-for="Destination" class="control-label"></label>
+                                <input asp-for="Destination" class="form-control" />
+                                <span asp-validation-for="Destination" class=" error-message text-danger" id="DestinatonError"></span>
+
+                            </div>
+                        </form>
+                    </div>
+                  
+                </div>
+                <div class="form-group text-center mb-2">
+                    <input type="submit" value="Create Product and SKU" class="btn btn-primary btn-lg" style="background-color:tan" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    const colors = @Html.Raw(Json.Serialize(Model.Colors));
+    const sizes = @Html.Raw(Json.Serialize(Model.Sizes));
+    const materials = @Html.Raw(Json.Serialize(Model.Materials));
+
+    // Handle Add More Images button click
+    document.getElementById('addMoreImages').addEventListener('click', function () {
+        document.getElementById('product_image').click();
+
+        // Trigger file input click
+    });
+
+    // Handle file input change event and display thumbnails
+    document.getElementById('product_image').addEventListener('change', function (e) {
+        const files = e.target.files; // Get selected files
+        const thumbnailContainer = document.querySelector('.wrapper-thumb'); 
+        // Thumbnail container
+
+        // Loop through selected files and generate thumbnails
+
+        Array.from(files).forEach(file => {
+            const reader = new FileReader(); //  FileReader for file reading
+
+            reader.onload = function (event) {
+
+                const imgElement = document.createElement('img'); // img element for thumbnail
+                imgElement.src = event.target.result; // Set source of the image
+                imgElement.classList.add('img-thumbnail'); // Add Bootstrap img-thumbnail class
+                imgElement.style.maxWidth = '100px'; // Set max width for thumbnail
+                imgElement.style.margin = '5px'; // Add margin for spacing
+                imgElement.style.position = 'relative'; // Set position to relative for positioning the X button
+
+
+                const removeBtn = document.createElement('span');
+                removeBtn.innerHTML = 'X';
+                removeBtn.classList.add('remove-btn');
+
+
+                // Append the remove button and image to the thumbnail container
+                thumbnailContainer.appendChild(imgElement);
+                thumbnailContainer.appendChild(removeBtn);
+
+                // Remove the image when the "X" is clicked
+                removeBtn.addEventListener('click', function() {
+                    imgElement.remove(); // Remove the thumbnail when "X" is clicked
+                });
+            };
+
+            reader.readAsDataURL(file);
+        });
+
+        // Show the Add More Images button after the user selects a file
+        document.getElementById('addMoreImages').style.display = 'inline-block';
+    });
+
+
+          let rowCounter = 0;
+
+    // Handle Product Variant Add button click
+    $("#rowAdder").click(function () {
+        debugger
+        // Checks if the last row has any empty or null values
+        let lastRow = $('#newinput tr:last');
+        let isValid = true;// dono variables ko assign 
+
+        // Check all input fields and select fields in the last row
+        lastRow.find('input, select').each(function () {
+            if ($(this).val() == '' || $(this).val() == null) {
+                isValid = false;  // Mark as invalid if any field is empty
+            }
+        });
+
+        // Only add a new row if the last row is valid no empty fields
+        if (isValid) {
+            rowCounter++;  // Increment the row counter
+
+            // Default values for the first row
+            const defaultColor = 'Red';  
+            const defaultSize = 'M';     
+            const defaultMaterial = 'Cotton';
+            const defaultPrice = '100';  
+            const defaultStock = '10';  
+            const defaultSkuName = 'BG-XL-55'; 
+
+            // Set default values only for the first row
+            const colorValue = rowCounter === 1 ? defaultColor : '';
+            const sizeValue = rowCounter === 1 ? defaultSize : '';
+            const materialValue = rowCounter === 1 ? defaultMaterial : '';
+            const priceValue = rowCounter === 1 ? defaultPrice : '';
+            const stockValue = rowCounter === 1 ? defaultStock : '';
+            const skuValue = rowCounter === 1 ? defaultSkuName : '';
+
+            let newRowAdd =
+                '<tr id="row' + rowCounter + '">' +
+                    // Color dropdown with dynamic span ID and default value
+                    '<td><select class="form-control m-input colorInput chosen-select" id="Color' + rowCounter + '" name="Color">' +
+                        '<option value="">Select Color</option>';
+            colors.forEach(function (color) {
+                newRowAdd += '<option value="' + color + '" ' + (color === colorValue ? 'selected' : '') + '>' + color + '</option>';
+            });
+            newRowAdd += '</select><span class="error-message text-danger" id="Color' + rowCounter + 'Error"></span></td>' +
+
+                    '<td><select class="form-control m-input sizeInput chosen-select" id="Size' + rowCounter + '" name="Size">' +
+                        '<option value="">Select Size</option>';
+            sizes.forEach(function (size) {
+                newRowAdd += '<option value="' + size + '" ' + (size === sizeValue ? 'selected' : '') + '>' + size + '</option>';
+            });
+            newRowAdd += '</select><span class="error-message text-danger" id="Size' + rowCounter + 'Error"></span></td>' +
+
+                    '<td><select class="form-control m-input materialInput chosen-select" id="Material' + rowCounter + '" name="Material">' +
+                        '<option value="">Select Material</option>';
+            materials.forEach(function (material) {
+                newRowAdd += '<option value="' + material + '" ' + (material === materialValue ? 'selected' : '') + '>' + material + '</option>';
+            });
+            newRowAdd += '</select><span class="error-message text-danger" id="Material' + rowCounter + 'Error"></span></td>' +
+
+                    '<td><input type="text" class="form-control m-input priceInput" name="Price" placeholder="Enter Price" id="Price' + rowCounter + '" value="' + priceValue + '">' +
+                        '<span class="error-message text-danger" id="Price' + rowCounter + 'Error"></span></td>' +
+
+                    '<td><input type="number" class="form-control m-input stockQuantityInput" name="StockQuantity" id="StockQuantity' + rowCounter + '" placeholder="Enter Quantity" value="' + stockValue + '">' +
+                        '<span class="error-message text-danger" id="StockQuantity' + rowCounter + 'Error"></span></td>' +
+
+                    '<td><input type="text" class="form-control m-input skuNameInput" name="SkuName" id="SkuName' + rowCounter + '"  placeholder="Enter SKU" value="' + skuValue + '">' +
+                        '<span class="error-message text-danger" id="SkuName' + rowCounter + 'Error"></span></td>' +
+
+                    '<td>' +
+                        '<input type="file" class="form-control m-input fileInput" name="product_imagesku" id="product_imagesku' + rowCounter + '" accept="image/*" multiple required>' +
+                        '<span class="error-message text-danger" id="product_imagesku' + rowCounter + 'Error"></span>' +
+                        '<div class="image-thumbnails mt-2"></div>' +
+                    '</td>' +
+
+                    // Delete button
+                    '<td><button type="button" class="btn btn-danger deleteRowBtn"><i class="bi bi-trash"></i></button></td>' +
+                '</tr>';
+
+            // Append new row to the table
+            $('#newinput').append(newRowAdd);
+
+            // Trigger validation for the newly added rows fields
+            validateNewRow(rowCounter);
+        } else {
+            // error alert if the last row is invalid
+            alert('Please complete the current row before adding a new one.');
+        } 
+    });
+
+    // Function to trigger validation for new rows
+    function validateNewRow(rowId) {
+        // Validate the newly added row's fields
+        $('#productForm').validate().element('#Color' + rowId);
+        $('#productForm').validate().element('#Size' + rowId);
+        $('#productForm').validate().element('#Material' + rowId);
+        $('#productForm').validate().element('#Price' + rowId);
+        $('#productForm').validate().element('#StockQuantity' + rowId);
+        $('#productForm').validate().element('#SkuName' + rowId);
+        $('#productForm').validate().element('#product_imagesku' + rowId);
+    }
+
+    // Handle delete row button click
+    $(document).on('click', '.deleteRowBtn', function () {
+        $(this).closest('tr').remove();
+    });
+
+    // validation when the document is ready
+    $(document).ready(function () {
+        $('#productForm').validate({
+            rules: {
+                ProductName: { required: true },
+                product_image: { required: true },
+                Category: { required: true },
+                CountryOrigin: { required: true },
+                Description: { required: true },
+                From: { required: true },
+                Destination: { required: true },
+                StockQuantity: { required: true },
+                Color: { required: true },
+                Size: { required: true },
+                Material: { required: true },
+                Price: { required: true },
+                SkuName:{required: true},
+                product_imagesku: { required: true }
+            },
+            messages: {
+                ProductName: { required: "Please enter a product name" },
+                product_image: { required: "Please upload a product image" },
+                Category: { required: "Please select a category" },
+                CountryOrigin: { required: "Please enter the country of origin" },
+                Description: { required: "Please enter a product description" },
+                From: { required: "Please enter a proper pickup address" },
+                Destination: { required: "Please enter a proper destination" },
+                StockQuantity: { required: "Please enter a valid stock quantity" },
+                Color: { required: "Please select a color" },
+                Size: { required: "Please select a size" },
+                Material: { required: "Please select a material" },
+                Price: { required: "Please enter a price" },
+                product_imagesku: { required: "Please upload a product image" },
+                SkuName:{ required: "please enter a valid name"}
+            },
+            errorPlacement: function (error, element) {
+                const errorMessageId = element.attr("id") + "Error";
+                $("#" + errorMessageId).text(error.text());
+            },
+            success: function (label, element) {
+                const successMessageId = $(element).attr("id") + "Error";
+                $("#" + successMessageId).text('');
+            }
+        });
+    });
+
+    // Handle form submission
+    $('#productForm').submit(function (e) {
+        e.preventDefault();
+        if ($(this).valid()) {
+            var formData = new FormData(this);
+            $.ajax({
+                url: '@Url.Action("InsertProductAndSku", "Home")',
+                type: 'POST',
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (response) {
+                    alert('Product and SKU added successfully!');
+                    $('#productForm')[0].reset();
+                },
+                error: function (error) {
+                    alert('Error occurred. Please try again.');
+                    console.log(error);
+                }
+            });
+        } else {
+            alert('Please fill all required fields correctly!');
+        }
+    });
+
+
+</script>

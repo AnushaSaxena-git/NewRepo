@@ -1,0 +1,232 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="template\**" />
+    <Content Remove="template\**" />
+    <EmbeddedResource Remove="template\**" />
+    <None Remove="template\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\css\adminlte.components.css" />
+    <Content Remove="wwwroot\css\adminlte.components.css.map" />
+    <Content Remove="wwwroot\css\adminlte.components.min.css" />
+    <Content Remove="wwwroot\css\adminlte.components.min.css.map" />
+    <Content Remove="wwwroot\css\adminlte.core.css" />
+    <Content Remove="wwwroot\css\adminlte.core.css.map" />
+    <Content Remove="wwwroot\css\adminlte.core.min.css" />
+    <Content Remove="wwwroot\css\adminlte.core.min.css.map" />
+    <Content Remove="wwwroot\css\adminlte.css" />
+    <Content Remove="wwwroot\css\adminlte.css.map" />
+    <Content Remove="wwwroot\css\adminlte.extra-components.css" />
+    <Content Remove="wwwroot\css\adminlte.extra-components.css.map" />
+    <Content Remove="wwwroot\css\adminlte.extra-components.min.css" />
+    <Content Remove="wwwroot\css\adminlte.extra-components.min.css.map" />
+    <Content Remove="wwwroot\css\adminlte.min.css" />
+    <Content Remove="wwwroot\css\adminlte.min.css.map" />
+    <Content Remove="wwwroot\css\adminlte.pages.css" />
+    <Content Remove="wwwroot\css\adminlte.pages.css.map" />
+    <Content Remove="wwwroot\css\adminlte.pages.min.css" />
+    <Content Remove="wwwroot\css\adminlte.pages.min.css.map" />
+    <Content Remove="wwwroot\css\adminlte.plugins.css" />
+    <Content Remove="wwwroot\css\adminlte.plugins.css.map" />
+    <Content Remove="wwwroot\css\adminlte.plugins.min.css" />
+    <Content Remove="wwwroot\css\adminlte.plugins.min.css.map" />
+    <Content Remove="wwwroot\css\adminlte.rtl.css" />
+    <Content Remove="wwwroot\css\adminlte.rtl.css.map" />
+    <Content Remove="wwwroot\css\adminlte.rtl.min.css" />
+    <Content Remove="wwwroot\css\adminlte.rtl.min.css.map" />
+    <Content Remove="wwwroot\css\all.css" />
+    <Content Remove="wwwroot\css\all.min.css" />
+    <Content Remove="wwwroot\css\dist\js\adminlte.js" />
+    <Content Remove="wwwroot\css\dist\js\adminlte.js.map" />
+    <Content Remove="wwwroot\css\dist\js\adminlte.min.js" />
+    <Content Remove="wwwroot\css\dist\js\adminlte.min.js.map" />
+    <Content Remove="wwwroot\js\adminlte.js" />
+    <Content Remove="wwwroot\js\adminlte.js.map" />
+    <Content Remove="wwwroot\js\adminlte.min.js" />
+    <Content Remove="wwwroot\js\adminlte.min.js.map" />
+    <Content Remove="wwwroot\js\bootstrap.bundle.js" />
+    <Content Remove="wwwroot\js\bootstrap.bundle.js.map" />
+    <Content Remove="wwwroot\js\bootstrap.bundle.min.js" />
+    <Content Remove="wwwroot\js\bootstrap.bundle.min.js.map" />
+    <Content Remove="wwwroot\js\bootstrap.bundle1.js" />
+    <Content Remove="wwwroot\js\bootstrap.bundle1.js.map" />
+    <Content Remove="wwwroot\js\bootstrap.bundle1.min.js" />
+    <Content Remove="wwwroot\js\bootstrap.bundle1.min.js.map" />
+    <Content Remove="wwwroot\js\bootstrap.js" />
+    <Content Remove="wwwroot\js\bootstrap.js.map" />
+    <Content Remove="wwwroot\js\bootstrap.min.js" />
+    <Content Remove="wwwroot\js\bootstrap.min.js.map" />
+    <Content Remove="wwwroot\js\dashboard.js" />
+    <Content Remove="wwwroot\js\dashboard2.js" />
+    <Content Remove="wwwroot\js\dashboard3.js" />
+    <Content Remove="wwwroot\js\demo.js" />
+    <Content Remove="wwwroot\js\pages\calendar.html" />
+    <Content Remove="wwwroot\js\pages\charts\chartjs.html" />
+    <Content Remove="wwwroot\js\pages\charts\flot.html" />
+    <Content Remove="wwwroot\js\pages\charts\inline.html" />
+    <Content Remove="wwwroot\js\pages\examples\404.html" />
+    <Content Remove="wwwroot\js\pages\examples\500.html" />
+    <Content Remove="wwwroot\js\pages\examples\blank.html" />
+    <Content Remove="wwwroot\js\pages\examples\contacts.html" />
+    <Content Remove="wwwroot\js\pages\examples\e-commerce.html" />
+    <Content Remove="wwwroot\js\pages\examples\forgot-password.html" />
+    <Content Remove="wwwroot\js\pages\examples\invoice-print.html" />
+    <Content Remove="wwwroot\js\pages\examples\invoice.html" />
+    <Content Remove="wwwroot\js\pages\examples\language-menu.html" />
+    <Content Remove="wwwroot\js\pages\examples\legacy-user-menu.html" />
+    <Content Remove="wwwroot\js\pages\examples\lockscreen.html" />
+    <Content Remove="wwwroot\js\pages\examples\login.html" />
+    <Content Remove="wwwroot\js\pages\examples\pace.html" />
+    <Content Remove="wwwroot\js\pages\examples\profile.html" />
+    <Content Remove="wwwroot\js\pages\examples\project-add.html" />
+    <Content Remove="wwwroot\js\pages\examples\project-detail.html" />
+    <Content Remove="wwwroot\js\pages\examples\project-edit.html" />
+    <Content Remove="wwwroot\js\pages\examples\projects.html" />
+    <Content Remove="wwwroot\js\pages\examples\recover-password.html" />
+    <Content Remove="wwwroot\js\pages\examples\register.html" />
+    <Content Remove="wwwroot\js\pages\forms\advanced.html" />
+    <Content Remove="wwwroot\js\pages\forms\editors.html" />
+    <Content Remove="wwwroot\js\pages\forms\general.html" />
+    <Content Remove="wwwroot\js\pages\forms\validation.html" />
+    <Content Remove="wwwroot\js\pages\gallery.html" />
+    <Content Remove="wwwroot\js\pages\layout\boxed.html" />
+    <Content Remove="wwwroot\js\pages\layout\collapsed-sidebar.html" />
+    <Content Remove="wwwroot\js\pages\layout\fixed-footer.html" />
+    <Content Remove="wwwroot\js\pages\layout\fixed-sidebar.html" />
+    <Content Remove="wwwroot\js\pages\layout\fixed-topnav.html" />
+    <Content Remove="wwwroot\js\pages\layout\top-nav-sidebar.html" />
+    <Content Remove="wwwroot\js\pages\layout\top-nav.html" />
+    <Content Remove="wwwroot\js\pages\mailbox\compose.html" />
+    <Content Remove="wwwroot\js\pages\mailbox\mailbox.html" />
+    <Content Remove="wwwroot\js\pages\mailbox\read-mail.html" />
+    <Content Remove="wwwroot\js\pages\tables\data.html" />
+    <Content Remove="wwwroot\js\pages\tables\jsgrid.html" />
+    <Content Remove="wwwroot\js\pages\tables\simple.html" />
+    <Content Remove="wwwroot\js\pages\UI\buttons.html" />
+    <Content Remove="wwwroot\js\pages\UI\general.html" />
+    <Content Remove="wwwroot\js\pages\UI\icons.html" />
+    <Content Remove="wwwroot\js\pages\UI\modals.html" />
+    <Content Remove="wwwroot\js\pages\UI\navbar.html" />
+    <Content Remove="wwwroot\js\pages\UI\ribbons.html" />
+    <Content Remove="wwwroot\js\pages\UI\sliders.html" />
+    <Content Remove="wwwroot\js\pages\UI\timeline.html" />
+    <Content Remove="wwwroot\js\pages\widgets.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="LTE\.github\codeql\codeql-config.yml" />
+    <None Include="LTE\.github\CONTRIBUTING.md" />
+    <None Include="LTE\.github\dependabot.yml" />
+    <None Include="LTE\.github\FUNDING.yml" />
+    <None Include="LTE\.github\ISSUE_TEMPLATE\bug-report-for-adminlte-v3.1-x.md" />
+    <None Include="LTE\.github\ISSUE_TEMPLATE\feature-request-for-adminlte-v4-x.md" />
+    <None Include="LTE\.github\workflows\bundlewatch.yml" />
+    <None Include="LTE\.github\workflows\codeql.yml" />
+    <None Include="LTE\.github\workflows\docs.yml" />
+    <None Include="LTE\.github\workflows\lint.yml" />
+    <None Include="LTE\.github\workflows\node-sass.yml" />
+    <None Include="LTE\.github\workflows\release.yml" />
+    <None Include="wwwroot\css\.github\ISSUE_TEMPLATE\bug-report-for-adminlte-v2-4-x.md" />
+    <None Include="wwwroot\css\.github\ISSUE_TEMPLATE\bug-report-for-adminlte-v3-x.md" />
+    <None Include="wwwroot\css\.github\ISSUE_TEMPLATE\feature-request-for-adminlte-v3-x.md" />
+    <None Include="wwwroot\css\all.css" />
+    <None Include="wwwroot\css\all.min.css" />
+    <None Include="wwwroot\js\adminlte.js" />
+    <None Include="wwwroot\js\adminlte.js.map" />
+    <None Include="wwwroot\js\adminlte.min.js" />
+    <None Include="wwwroot\js\adminlte.min.js.map" />
+    <None Include="wwwroot\js\bootstrap.bundle.js" />
+    <None Include="wwwroot\js\bootstrap.bundle.js.map" />
+    <None Include="wwwroot\js\bootstrap.bundle.min.js" />
+    <None Include="wwwroot\js\bootstrap.bundle.min.js.map" />
+    <None Include="wwwroot\js\bootstrap.bundle1.js" />
+    <None Include="wwwroot\js\bootstrap.bundle1.js.map" />
+    <None Include="wwwroot\js\bootstrap.bundle1.min.js" />
+    <None Include="wwwroot\js\bootstrap.bundle1.min.js.map" />
+    <None Include="wwwroot\js\bootstrap.js" />
+    <None Include="wwwroot\js\bootstrap.js.map" />
+    <None Include="wwwroot\js\bootstrap.min.js" />
+    <None Include="wwwroot\js\bootstrap.min.js.map" />
+    <None Include="wwwroot\js\dashboard.js" />
+    <None Include="wwwroot\js\dashboard2.js" />
+    <None Include="wwwroot\js\dashboard3.js" />
+    <None Include="wwwroot\js\demo.js" />
+    <None Include="wwwroot\js\pages\calendar.html" />
+    <None Include="wwwroot\js\pages\charts\chartjs.html" />
+    <None Include="wwwroot\js\pages\charts\flot.html" />
+    <None Include="wwwroot\js\pages\charts\inline.html" />
+    <None Include="wwwroot\js\pages\examples\404.html" />
+    <None Include="wwwroot\js\pages\examples\500.html" />
+    <None Include="wwwroot\js\pages\examples\blank.html" />
+    <None Include="wwwroot\js\pages\examples\contacts.html" />
+    <None Include="wwwroot\js\pages\examples\e-commerce.html" />
+    <None Include="wwwroot\js\pages\examples\forgot-password.html" />
+    <None Include="wwwroot\js\pages\examples\invoice-print.html" />
+    <None Include="wwwroot\js\pages\examples\invoice.html" />
+    <None Include="wwwroot\js\pages\examples\language-menu.html" />
+    <None Include="wwwroot\js\pages\examples\legacy-user-menu.html" />
+    <None Include="wwwroot\js\pages\examples\lockscreen.html" />
+    <None Include="wwwroot\js\pages\examples\login.html" />
+    <None Include="wwwroot\js\pages\examples\pace.html" />
+    <None Include="wwwroot\js\pages\examples\profile.html" />
+    <None Include="wwwroot\js\pages\examples\project-add.html" />
+    <None Include="wwwroot\js\pages\examples\project-detail.html" />
+    <None Include="wwwroot\js\pages\examples\project-edit.html" />
+    <None Include="wwwroot\js\pages\examples\projects.html" />
+    <None Include="wwwroot\js\pages\examples\recover-password.html" />
+    <None Include="wwwroot\js\pages\examples\register.html" />
+    <None Include="wwwroot\js\pages\forms\advanced.html" />
+    <None Include="wwwroot\js\pages\forms\editors.html" />
+    <None Include="wwwroot\js\pages\forms\general.html" />
+    <None Include="wwwroot\js\pages\forms\validation.html" />
+    <None Include="wwwroot\js\pages\gallery.html" />
+    <None Include="wwwroot\js\pages\layout\boxed.html" />
+    <None Include="wwwroot\js\pages\layout\collapsed-sidebar.html" />
+    <None Include="wwwroot\js\pages\layout\fixed-footer.html" />
+    <None Include="wwwroot\js\pages\layout\fixed-sidebar.html" />
+    <None Include="wwwroot\js\pages\layout\fixed-topnav.html" />
+    <None Include="wwwroot\js\pages\layout\top-nav-sidebar.html" />
+    <None Include="wwwroot\js\pages\layout\top-nav.html" />
+    <None Include="wwwroot\js\pages\mailbox\compose.html" />
+    <None Include="wwwroot\js\pages\mailbox\mailbox.html" />
+    <None Include="wwwroot\js\pages\mailbox\read-mail.html" />
+    <None Include="wwwroot\js\pages\tables\data.html" />
+    <None Include="wwwroot\js\pages\tables\jsgrid.html" />
+    <None Include="wwwroot\js\pages\tables\simple.html" />
+    <None Include="wwwroot\js\pages\UI\buttons.html" />
+    <None Include="wwwroot\js\pages\UI\general.html" />
+    <None Include="wwwroot\js\pages\UI\icons.html" />
+    <None Include="wwwroot\js\pages\UI\modals.html" />
+    <None Include="wwwroot\js\pages\UI\navbar.html" />
+    <None Include="wwwroot\js\pages\UI\ribbons.html" />
+    <None Include="wwwroot\js\pages\UI\sliders.html" />
+    <None Include="wwwroot\js\pages\UI\timeline.html" />
+    <None Include="wwwroot\js\pages\widgets.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Controllers\" />
+    <Folder Include="LTE\dist\css\" />
+    <Folder Include="LTE\dist\js\" />
+  </ItemGroup>
+
+</Project>
