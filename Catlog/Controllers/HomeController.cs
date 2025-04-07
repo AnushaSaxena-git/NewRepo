@@ -837,6 +837,9 @@ public class HomeController : Controller
             return View();
         }
     }
+
+
+    public IActionResult lol() {  return View(); }  
     [HttpPost]
     public async Task<IActionResult> InsertProductAndSku(
      string productName,
